@@ -1,0 +1,30 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Static frontend only. API runs separately (Railway/Render/Fly).
+# Set VITE_API_URL to your API host at build time.
+
+[[redirects]]
+  from = "/home"
+  to = "/home.html"
+  status = 200
+
+[[redirects]]
+  from = "/upgrade"
+  to = "/upgrade.html"
+  status = 200
+
+[[redirects]]
+  from = "/remote"
+  to = "/remote.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

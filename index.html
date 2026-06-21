@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BigTextDisplay — display big text and timers on any screen. No signup. Works on projectors, TVs, and tablets.">
+  <meta name="theme-color" content="#09090b">
+  <meta property="og:title" content="BigTextDisplay">
+  <meta property="og:description" content="Big text and timers for any screen. Share a link or control from your phone.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bigtextdisplay.com">
+  <title>BigTextDisplay</title>
+  <link rel="icon" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/favicon.svg">
+</head>
+<body>
+  <main class="stage" id="stage">
+    <section id="panel-text" class="panel active" aria-label="Big text display">
+      <div class="canvas" id="text-canvas">
+        <div class="big-text" id="big-text" contenteditable="true" spellcheck="false">HELLO</div>
+      </div>
+    </section>
+
+    <section id="panel-timer" class="panel" hidden aria-label="Timer display">
+      <div class="canvas timer-canvas" id="timer-canvas">
+        <div class="timer-stage">
+          <svg class="timer-ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="timer-ring-track" cx="60" cy="60" r="54"/>
+            <circle class="timer-ring-progress" id="timer-ring" cx="60" cy="60" r="54"/>
+          </svg>
+          <div class="timer-stack">
+            <div class="timer-display" id="timer-display" aria-live="polite">05:00</div>
+            <div class="timer-label" id="timer-label"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="watermark" id="watermark">bigtextdisplay.com</div>
+
+  <div class="times-up" id="times-up">
+    <h1>TIME'S UP</h1>
+    <div class="times-up-actions">
+      <button type="button" id="times-up-add1">+1 min</button>
+      <button type="button" id="times-up-dismiss">Dismiss</button>
+    </div>
+  </div>
+
+  <nav class="mission-bar" id="mission-bar" aria-label="Controls">
+    <div class="mission-glass">
+      <div class="mission-row mission-primary">
+        <span class="mission-brand" aria-hidden="true">btd</span>
+        <span class="pro-badge" id="pro-badge" hidden>Pro</span>
+
+        <div class="segmented" role="tablist" aria-label="Mode">
+          <button type="button" role="tab" id="tab-text" aria-selected="true">Text</button>
+          <button type="button" role="tab" id="tab-timer" aria-selected="false">Timer</button>
+        </div>
+
+        <div class="mission-spacer"></div>
+
+        <div class="mission-actions">
+          <button type="button" class="mission-icon" id="btn-share" title="Copy share link" aria-label="Share">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          </button>
+          <button type="button" class="mission-icon pro-gated" id="btn-room" title="Phone remote (Pro)" aria-label="Remote room">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </button>
+          <button type="button" class="mission-icon" id="btn-upgrade" title="Upgrade to Pro" aria-label="Upgrade">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </button>
+          <button type="button" class="mission-icon" id="btn-hide" title="Hide controls (H)" aria-label="Hide controls">
+            <svg class="icon-hide" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            <svg class="icon-show" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" hidden><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button type="button" class="mission-icon" id="btn-fullscreen" title="Fullscreen (F)" aria-label="Fullscreen">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mission-row mission-themes">
+        <div class="theme-strip" role="group" aria-label="Theme">
+          <button type="button" class="theme-swatch" data-theme="midnight" title="Midnight"></button>
+          <button type="button" class="theme-swatch" data-theme="stage" title="Stage"></button>
+          <button type="button" class="theme-swatch" data-theme="paper" title="Paper"></button>
+          <button type="button" class="theme-swatch" data-theme="rose" title="Rose"></button>
+          <button type="button" class="theme-swatch" data-theme="blush" title="Blush"></button>
+          <button type="button" class="theme-swatch" data-theme="sepia" title="Sepia"></button>
+          <button type="button" class="theme-swatch" data-theme="purple" title="Purple"></button>
+          <button type="button" class="theme-swatch" data-theme="green" title="Green"></button>
+          <button type="button" class="theme-swatch" data-theme="ocean" title="Ocean"></button>
+          <button type="button" class="theme-swatch" data-theme="signal" title="Signal"></button>
+        </div>
+      </div>
+
+      <div class="mission-row mission-context" id="context-text">
+        <input type="text" class="mission-input" id="text-input" placeholder="Type a message…" value="HELLO" spellcheck="false">
+        <div class="color-pickers">
+          <label class="color-picker" title="Text color"><span class="micro-label">Text</span><input type="color" id="text-color" value="#fafafa"></label>
+          <label class="color-picker" title="Background"><span class="micro-label">BG</span><input type="color" id="bg-color" value="#09090b"></label>
+        </div>
+        <div class="scale-control">
+          <span class="micro-label">Size</span>
+          <input type="range" id="text-scale" min="25" max="200" value="100" step="5">
+          <span class="scale-value" id="scale-value">100%</span>
+        </div>
+      </div>
+
+      <div class="mission-row mission-context pro-row" id="context-pro">
+        <select id="saved-select" class="pro-gated" title="Saved displays"><option value="">Saved…</option></select>
+        <button type="button" class="chip chip-save pro-gated" id="btn-save-display">Save</button>
+        <select id="sound-pack" class="pro-gated" title="Finish sound">
+          <option value="beep">Beep</option>
+          <option value="bell">Bell</option>
+          <option value="horn">Horn</option>
+          <option value="chime">Chime</option>
+        </select>
+        <label class="pro-gated" title="Logo (Pro)"><input type="file" id="logo-input" accept="image/*" hidden><span class="chip" style="display:inline-block;cursor:pointer">Logo</span></label>
+        <input type="text" id="license-input" class="mission-input" placeholder="License key" style="max-width:120px;font-size:10px">
+      </div>
+
+      <div class="mission-row mission-context" id="context-timer" hidden>
+        <div class="timer-presets">
+          <button type="button" class="chip" data-seconds="60">1m</button>
+          <button type="button" class="chip" data-seconds="300">5m</button>
+          <button type="button" class="chip" data-seconds="600">10m</button>
+          <button type="button" class="chip" data-seconds="900">15m</button>
+          <button type="button" class="chip" data-seconds="1800">30m</button>
+        </div>
+        <div class="timer-set">
+          <input type="number" id="timer-min" min="0" max="999" value="5" class="mission-num">
+          <span class="timer-colon">:</span>
+          <input type="number" id="timer-sec" min="0" max="59" value="0" class="mission-num">
+        </div>
+        <input type="text" id="timer-label-input" class="mission-input mission-input-short" placeholder="Label" maxlength="32">
+        <div class="transport">
+          <button type="button" class="transport-btn primary" id="btn-start">Start</button>
+          <button type="button" class="transport-btn" id="btn-pause" disabled>Pause</button>
+          <button type="button" class="transport-btn" id="btn-reset">Reset</button>
+          <button type="button" class="transport-btn chip-add1" id="btn-add1">+1m</button>
+        </div>
+        <button type="button" class="mission-icon toggle" id="btn-sound" aria-pressed="true" aria-label="Sound">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="chrome-hover-zone" id="chrome-hover-zone" aria-hidden="true">
+    <button type="button" class="chrome-reveal" id="chrome-reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg><span>Controls</span></button>
+  </div>
+
+  <div class="modal-backdrop" id="room-modal">
+    <div class="modal">
+      <h2>Phone Remote</h2>
+      <p>Scan QR or open the link on your phone to control this display.</p>
+      <code id="room-code">------</code>
+      <img id="room-qr" width="180" height="180" alt="QR code">
+      <a id="room-url" href="#" target="_blank" class="modal-secondary" style="display:block;text-align:center;margin-top:8px">Open remote</a>
+      <div class="modal-actions">
+        <button type="button" class="modal-secondary" id="room-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="onboarding" id="onboarding">
+    <div class="onboarding-card">
+      <h2>Welcome to BigTextDisplay</h2>
+      <ol>
+        <li>Type your message or switch to Timer</li>
+        <li>Pick a theme or custom colors</li>
+        <li>Press <strong>H</strong> to hide controls for the big screen</li>
+        <li>Share a link so anyone sees the same display</li>
+      </ol>
+      <button type="button" id="onboarding-go">Got it</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

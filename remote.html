@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <title>Remote — BigTextDisplay</title>
+  <link rel="icon" href="/favicon.svg">
+</head>
+<body>
+  <main class="remote-app">
+    <header class="remote-header">
+      <span class="mission-brand">btd remote</span>
+      <code id="remote-room">------</code>
+    </header>
+
+    <div class="remote-tabs">
+      <button type="button" class="remote-tab active" data-tab="text">Text</button>
+      <button type="button" class="remote-tab" data-tab="timer">Timer</button>
+    </div>
+
+    <section id="tab-text" class="remote-panel">
+      <textarea id="remote-text" rows="4" placeholder="Message on display…"></textarea>
+      <button type="button" class="remote-btn primary" id="remote-send-text">Update display</button>
+    </section>
+
+    <section id="tab-timer" class="remote-panel" hidden>
+      <div class="remote-timer-set">
+        <input type="number" id="remote-min" min="0" value="5" class="mission-num">
+        <span>:</span>
+        <input type="number" id="remote-sec" min="0" max="59" value="0" class="mission-num">
+      </div>
+      <input type="text" id="remote-label" class="mission-input" placeholder="Label" style="width:100%;margin:8px 0">
+      <div class="remote-actions">
+        <button type="button" class="remote-btn primary" id="remote-timer-set">Set timer</button>
+        <button type="button" class="remote-btn" id="remote-mode-text">Show text</button>
+      </div>
+    </section>
+
+    <p class="remote-hint">Changes sync to the display within ~2 seconds.</p>
+    <a href="/" class="remote-link">← Open display</a>
+  </main>
+  <script type="module" src="/src/remote.ts"></script>
+</body>
+</html>

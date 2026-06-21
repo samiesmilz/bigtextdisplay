@@ -1,0 +1,25 @@
+{
+  "name": "bigtextdisplay",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"node server/index.mjs\" \"vite\"",
+    "dev:vercel": "vercel dev",
+    "build": "tsc && vite build",
+    "preview": "node server/index.mjs & vite preview",
+    "start": "NODE_ENV=production node server/index.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/qrcode": "^1.5.6",
+    "concurrently": "^9.1.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-pwa": "^0.21.1"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.38.0",
+    "qrcode": "^1.5.4"
+  }
+}
