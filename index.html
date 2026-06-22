@@ -60,7 +60,7 @@
   <nav class="mission-bar" id="mission-bar" aria-label="Controls">
     <div class="mission-glass">
       <div class="mission-row mission-primary">
-        <span class="mission-brand" aria-hidden="true">btd</span>
+        <span class="mission-brand" title="Big Text Display">Big Text Display</span>
         <span class="pro-badge" id="pro-badge" hidden>Pro</span>
 
         <div class="segmented" role="tablist" aria-label="Mode">
@@ -71,21 +71,24 @@
         <div class="mission-spacer"></div>
 
         <div class="mission-actions">
-          <button type="button" class="mission-icon" id="btn-share" title="Copy share link" aria-label="Share">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          <button type="button" class="mission-action" id="btn-share" title="Share link (copy, email, social)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            <span>Share</span>
           </button>
-          <button type="button" class="mission-icon pro-gated" id="btn-room" title="Phone remote (Pro)" aria-label="Remote room">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <button type="button" class="mission-action pro-gated" id="btn-room" title="Control from your phone (Pro)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span>Phone</span>
           </button>
-          <button type="button" class="mission-icon" id="btn-upgrade" title="Upgrade to Pro" aria-label="Upgrade">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <button type="button" class="mission-action mission-action-accent" id="btn-upgrade" title="Upgrade to Pro">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Pro</span>
           </button>
-          <button type="button" class="mission-icon" id="btn-hide" title="Hide controls (H)" aria-label="Hide controls">
-            <svg class="icon-hide" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-            <svg class="icon-show" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" hidden><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <button type="button" class="mission-action mission-action-text" id="btn-hide" title="Hide controls (H)">
+            <span id="btn-hide-label">Hide</span>
           </button>
-          <button type="button" class="mission-icon" id="btn-fullscreen" title="Fullscreen (F)" aria-label="Fullscreen">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <button type="button" class="mission-action" id="btn-fullscreen" title="Fullscreen (F)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <span>Full</span>
           </button>
         </div>
       </div>
@@ -151,8 +154,9 @@
           <button type="button" class="transport-btn" id="btn-reset">Reset</button>
           <button type="button" class="transport-btn chip-add1" id="btn-add1">+1m</button>
         </div>
-        <button type="button" class="mission-icon toggle" id="btn-sound" aria-pressed="true" aria-label="Sound">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <button type="button" class="mission-action mission-action-compact toggle" id="btn-sound" aria-pressed="true" title="Timer sound">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <span>Sound</span>
         </button>
       </div>
     </div>
@@ -180,27 +184,47 @@
         <button type="button" class="social-btn" data-social="email" title="Email app">✉</button>
       </div>
 
-      <label class="share-check">
-        <input type="checkbox" id="share-present"> Presentation mode link (hides controls)
+      <label class="share-check share-check-inline">
+        <input type="checkbox" id="share-present"> Presentation link <span class="share-hint">— hides controls when opened</span>
       </label>
 
-      <div class="share-divider"><span>Save &amp; come back</span></div>
+      <section class="share-panel">
+        <h3 class="share-panel-title">Save to your inbox</h3>
+        <p class="share-panel-desc">Get this link emailed so you can reopen it next time.</p>
+        <form id="share-email-form" class="share-form">
+          <div class="share-field-row">
+            <div class="share-field">
+              <label for="share-first-name">First name</label>
+              <input type="text" id="share-first-name" placeholder="Sam" autocomplete="given-name">
+            </div>
+            <div class="share-field">
+              <label for="share-email">Email</label>
+              <input type="email" id="share-email" placeholder="you@example.com" required autocomplete="email">
+            </div>
+          </div>
+          <label class="share-check"><input type="checkbox" id="share-reminders"> Remind me weekly</label>
+          <button type="submit" class="share-btn-primary" id="share-email-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email me this link
+          </button>
+        </form>
+      </section>
 
-      <form id="share-email-form" class="share-form">
-        <input type="text" id="share-first-name" placeholder="First name" autocomplete="given-name">
-        <input type="email" id="share-email" placeholder="Email address" required autocomplete="email">
-        <label class="share-check"><input type="checkbox" id="share-reminders"> Remind me weekly</label>
-        <button type="submit" class="modal-primary" id="share-email-btn">Email me this link</button>
-      </form>
+      <section class="share-panel share-panel-muted">
+        <h3 class="share-panel-title">Invite a colleague</h3>
+        <p class="share-panel-desc">Send them the display link — great for co-teachers or AV helpers.</p>
+        <div class="share-field">
+          <label for="invite-email">Their email</label>
+          <input type="email" id="invite-email" placeholder="colleague@example.com" autocomplete="email">
+        </div>
+        <button type="button" class="share-btn-secondary" id="invite-send-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Send invite
+        </button>
+      </section>
 
-      <div class="share-divider"><span>Invite someone</span></div>
-      <div class="share-invite">
-        <input type="email" id="invite-email" placeholder="Colleague's email">
-        <button type="button" class="modal-secondary" id="invite-send-btn">Send invite</button>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="modal-secondary" id="share-close">Done</button>
+      <div class="modal-actions share-modal-footer">
+        <button type="button" class="share-btn-ghost" id="share-close">Done</button>
       </div>
     </div>
   </div>
@@ -224,7 +248,7 @@
       <ol>
         <li>Type your message or switch to Timer</li>
         <li>Pick a theme or custom colors</li>
-        <li>Press <strong>H</strong> to hide controls for the big screen</li>
+        <li>Press <strong>Hide</strong> or <strong>H</strong> for the big screen</li>
         <li>Share a link so anyone sees the same display</li>
       </ol>
       <button type="button" id="onboarding-go">Got it</button>

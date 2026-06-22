@@ -276,6 +276,10 @@ function setChromeHidden(hidden: boolean) {
   document.body.classList.toggle('presentation', hidden);
   document.body.classList.remove('chrome-peek', 'chrome-near');
   $('#chrome-hover-zone').setAttribute('aria-hidden', String(!hidden));
+  const hideLabel = $('#btn-hide-label');
+  if (hideLabel) hideLabel.textContent = hidden ? 'Show' : 'Hide';
+  const hideBtn = $('#btn-hide') as HTMLButtonElement;
+  if (hideBtn) hideBtn.title = hidden ? 'Show controls (H)' : 'Hide controls (H)';
 }
 
 function updateProUI() {
@@ -415,6 +419,7 @@ async function handleShareEmail(e: Event) {
   const reminders = ($('#share-reminders') as HTMLInputElement).checked;
   const shareUrl = buildShareUrl(settings, { present: sharePresentMode() });
   const btn = $('#share-email-btn') as HTMLButtonElement;
+  const btnHtml = btn.innerHTML;
   btn.disabled = true;
   btn.textContent = 'Sending…';
   try {
@@ -431,7 +436,7 @@ async function handleShareEmail(e: Event) {
     showToast('Could not save — try again');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Email me this link';
+    btn.innerHTML = btnHtml;
   }
 }
 
@@ -524,8 +529,12 @@ function bindEvents() {
   });
   $('#invite-send-btn').addEventListener('click', async () => {
     const to = ($('#invite-email') as HTMLInputElement).value.trim();
-    if (!to) return;
+    if (!to) { showToast('Enter their email'); return; }
     const fromName = ($('#share-first-name') as HTMLInputElement).value.trim();
+    const inviteBtn = $('#invite-send-btn') as HTMLButtonElement;
+    const inviteHtml = inviteBtn.innerHTML;
+    inviteBtn.disabled = true;
+    inviteBtn.textContent = 'Sending…';
     try {
       await inviteByEmail({
         to,
@@ -536,6 +545,9 @@ function bindEvents() {
       ($('#invite-email') as HTMLInputElement).value = '';
     } catch {
       showToast('Invite failed — check Resend config');
+    } finally {
+      inviteBtn.disabled = false;
+      inviteBtn.innerHTML = inviteHtml;
     }
   });
 

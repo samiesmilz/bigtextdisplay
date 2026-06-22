@@ -355,7 +355,7 @@ body {
   bottom: 20px;
   transform: translateX(-50%);
   z-index: 100;
-  width: min(780px, calc(100vw - 20px));
+  width: min(860px, calc(100vw - 20px));
   transition: opacity 0.3s var(--mission-ease), transform 0.35s var(--mission-ease);
 }
 
@@ -383,6 +383,8 @@ body {
 
 .mission-primary {
   padding: 0 2px;
+  flex-wrap: wrap;
+  gap: 8px 6px;
 }
 
 .mission-themes {
@@ -397,12 +399,16 @@ body {
 
 .mission-brand {
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--chrome-muted);
-  padding: 0 6px;
+  padding: 0 8px 0 4px;
   user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mission-spacer {
@@ -695,34 +701,74 @@ body {
   filter: brightness(1.08);
 }
 
-.mission-icon {
-  display: flex;
+.mission-icon,
+.mission-action {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
+  gap: 5px;
   height: 30px;
+  padding: 0 10px;
   border: none;
   border-radius: var(--radius-chip);
   background: var(--chrome-hover);
   color: var(--chrome-muted);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
+.mission-icon {
+  width: 30px;
+  padding: 0;
+}
+
+.mission-action svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.mission-action:hover,
 .mission-icon:hover {
   background: var(--chrome-active);
   color: var(--chrome-text);
 }
 
-.mission-icon.toggle[aria-pressed="false"] {
-  opacity: 0.4;
+.mission-action-text {
+  min-width: 44px;
+  font-weight: 700;
 }
 
-/* Hide / show chrome */
-#btn-hide .icon-show { display: none; }
-body.presentation #btn-hide .icon-hide { display: none; }
-body.presentation #btn-hide .icon-show { display: block; }
+.mission-action-accent {
+  background: rgba(250, 204, 21, 0.12);
+  color: var(--chrome-text);
+}
+
+.mission-action-accent:hover {
+  background: rgba(250, 204, 21, 0.22);
+}
+
+.mission-action-compact {
+  padding: 0 8px;
+}
+
+.mission-action.toggle[aria-pressed="false"],
+.mission-icon.toggle[aria-pressed="false"] {
+  opacity: 0.45;
+}
+
+.mission-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 
 .chrome-hover-zone {
   display: none;
@@ -806,6 +852,28 @@ body.presentation .big-text {
   .mission-bar {
     bottom: 12px;
     width: calc(100vw - 16px);
+  }
+
+  .mission-brand {
+    max-width: 72px;
+    font-size: 9px;
+  }
+
+  .mission-action span {
+    display: none;
+  }
+
+  .mission-action-text span,
+  .mission-action#btn-room span {
+    display: inline;
+  }
+
+  .mission-action {
+    padding: 0 8px;
+  }
+
+  .mission-action-text {
+    min-width: 40px;
   }
 
   .mission-context {
