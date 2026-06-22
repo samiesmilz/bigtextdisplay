@@ -272,24 +272,39 @@ function switchMode(mode: 'text' | 'timer') {
   if (isText) fitText();
 }
 
+function controlsVisible() {
+  return !document.body.classList.contains('presentation');
+}
+
+function updateEdgeChrome() {
+  const presenting = document.body.classList.contains('presentation');
+  const launcher = $('#edge-launcher');
+  launcher.hidden = !presenting;
+  const promo = $('#edge-promo');
+  promo.hidden = settings.pro || !controlsVisible();
+  $('#edge-dock').setAttribute('aria-hidden', String(presenting && !settings.pro));
+}
+
 function setChromeHidden(hidden: boolean) {
   document.body.classList.toggle('presentation', hidden);
-  document.body.classList.remove('chrome-peek', 'chrome-near');
-  $('#chrome-hover-zone').setAttribute('aria-hidden', String(!hidden));
+  document.body.classList.remove('edge-active');
   const hideLabel = $('#btn-hide-label');
   if (hideLabel) hideLabel.textContent = hidden ? 'Show' : 'Hide';
   const hideBtn = $('#btn-hide') as HTMLButtonElement;
   if (hideBtn) hideBtn.title = hidden ? 'Show controls (H)' : 'Hide controls (H)';
+  updateEdgeChrome();
 }
 
 function updateProUI() {
   const pro = settings.pro;
+  const dock = $('#edge-dock');
+  dock.hidden = pro;
   const wm = $('#watermark') as HTMLAnchorElement;
-  wm.hidden = pro;
   if (!pro) wm.href = '/home.html?utm_source=watermark';
   $$('.pro-gated').forEach((el) => el.classList.toggle('pro-locked', !pro));
   const badge = $('#pro-badge');
   if (badge) badge.hidden = !pro;
+  updateEdgeChrome();
   renderSavedSelect();
 }
 
@@ -398,15 +413,6 @@ function updatePageMeta() {
   setMeta('meta[name="twitter:image"]', getOgImageUrl(settings));
 }
 
-function maybeShowVisitorCta() {
-  const params = new URLSearchParams(location.search);
-  const isSharedView = params.has('q') || params.has('t') || params.has('ref');
-  if (!isSharedView || settings.pro) return;
-  const cta = $('#visitor-cta');
-  setTimeout(() => { cta.hidden = false; }, 4000);
-  setTimeout(() => { cta.hidden = true; }, 20000);
-}
-
 async function openShareModal() {
   refreshShareModal();
   openModal('share-modal');
@@ -495,16 +501,9 @@ function bindEvents() {
   });
 
   $('#btn-hide').addEventListener('click', () => {
-    const hiding = !document.body.classList.contains('presentation');
-    setChromeHidden(hiding);
-    if (hiding && !settings.pro && !localStorage.getItem('btd-hide-nudge')) {
-      localStorage.setItem('btd-hide-nudge', '1');
-      setTimeout(() => {
-        if (confirm('Presenting weekly? Save this display to your email for next time.')) openShareModal();
-      }, 600);
-    }
+    setChromeHidden(!document.body.classList.contains('presentation'));
   });
-  $('#chrome-reveal').addEventListener('click', () => setChromeHidden(false));
+  $('#edge-launcher').addEventListener('click', () => setChromeHidden(false));
   $('#btn-fullscreen').addEventListener('click', () => {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
     else document.exitFullscreen?.();
@@ -634,28 +633,31 @@ function bindEvents() {
     save();
   });
 
-  // Chrome peek
-  let peekTimer: ReturnType<typeof setTimeout>;
-  const showPeek = () => { if (document.body.classList.contains('presentation')) document.body.classList.add('chrome-peek'); };
-  const hidePeek = () => {
-    clearTimeout(peekTimer);
-    peekTimer = setTimeout(() => {
-      if (!$('#mission-bar').matches(':hover') && !$('#chrome-hover-zone').matches(':hover'))
-        document.body.classList.remove('chrome-peek');
-    }, 300);
+  // Edge launcher — reveal on bottom-right corner hover
+  const EDGE_W = 128;
+  const EDGE_H = 108;
+  let edgeTimer: ReturnType<typeof setTimeout>;
+  const setEdgeActive = (active: boolean) => {
+    clearTimeout(edgeTimer);
+    if (active) {
+      document.body.classList.add('edge-active');
+      return;
+    }
+    edgeTimer = setTimeout(() => document.body.classList.remove('edge-active'), 450);
   };
-  $('#chrome-hover-zone').addEventListener('mouseenter', showPeek);
-  $('#chrome-hover-zone').addEventListener('mouseleave', hidePeek);
-  $('#mission-bar').addEventListener('mouseenter', showPeek);
-  $('#mission-bar').addEventListener('mouseleave', hidePeek);
   document.addEventListener('mousemove', (e) => {
-    if (!document.body.classList.contains('presentation')) { document.body.classList.remove('chrome-near'); return; }
-    document.body.classList.toggle('chrome-near', e.clientY >= innerHeight - 52);
-    if (e.clientY >= innerHeight - 52) showPeek();
+    if (!document.body.classList.contains('presentation')) {
+      setEdgeActive(false);
+      return;
+    }
+    const near = e.clientX >= innerWidth - EDGE_W && e.clientY >= innerHeight - EDGE_H;
+    setEdgeActive(near);
   });
+  $('#edge-dock').addEventListener('mouseenter', () => setEdgeActive(true));
+  $('#edge-dock').addEventListener('mouseleave', () => setEdgeActive(false));
 
   $$('.canvas').forEach((c) => c.addEventListener('dblclick', (e) => {
-    if ((e.target as Element).closest('.mission-bar, .chrome-hover-zone')) return;
+    if ((e.target as Element).closest('.mission-bar, .edge-dock')) return;
     setChromeHidden(!document.body.classList.contains('presentation'));
   }));
 
@@ -663,7 +665,9 @@ function bindEvents() {
     if ((e.target as Element).matches('input, textarea, [contenteditable="true"]')) return;
     if (e.key === 'f' || e.key === 'F') { e.preventDefault(); document.documentElement.requestFullscreen?.(); }
     if (e.key === 'h' || e.key === 'H') { e.preventDefault(); setChromeHidden(!document.body.classList.contains('presentation')); }
-    if (e.key === 'Escape') setChromeHidden(false);
+    if (e.key === 'Escape') {
+      if (!document.body.classList.contains('presentation')) setChromeHidden(true);
+    }
     if (e.key === ' ' && settings.mode === 'timer') {
       e.preventDefault();
       (document.getElementById('btn-start') as HTMLButtonElement).disabled ? timer.pause() : timer.start();
@@ -717,8 +721,8 @@ async function init() {
   }
 
   updatePageMeta();
-  maybeShowVisitorCta();
   bindEvents();
+  updateEdgeChrome();
   document.body.classList.add('app-ready');
   requestAnimationFrame(fitText);
 }

@@ -42,12 +42,15 @@
     </section>
   </main>
 
-  <a class="watermark" id="watermark" href="/home.html?utm_source=watermark" target="_blank" rel="noopener">bigtextdisplay.com</a>
-
-  <div class="visitor-cta" id="visitor-cta" hidden>
-    <span>Like this display?</span>
-    <a href="/home.html?utm_source=visitor_cta">Make your own free →</a>
-  </div>
+  <aside class="edge-dock" id="edge-dock" aria-label="Site">
+    <a class="edge-promo" id="edge-promo" href="/home.html?utm_source=edge_promo" hidden>
+      Want more from Big Text?<span class="edge-promo-arrow" aria-hidden="true"> →</span>
+    </a>
+    <button type="button" class="edge-launcher" id="edge-launcher" aria-label="Show controls" title="Show controls (H)" hidden>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.75"/><circle cx="12" cy="12" r="1.75"/><circle cx="19" cy="12" r="1.75"/></svg>
+    </button>
+    <a class="watermark" id="watermark" href="/home.html?utm_source=watermark" target="_blank" rel="noopener">bigtextdisplay.com</a>
+  </aside>
 
   <div class="times-up" id="times-up">
     <h1>TIME'S UP</h1>
@@ -161,10 +164,6 @@
       </div>
     </div>
   </nav>
-
-  <div class="chrome-hover-zone" id="chrome-hover-zone" aria-hidden="true">
-    <button type="button" class="chrome-reveal" id="chrome-reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg><span>Controls</span></button>
-  </div>
 
   <div class="modal-backdrop" id="share-modal">
     <div class="modal modal-wide">
