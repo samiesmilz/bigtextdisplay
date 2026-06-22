@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>My displays — BigTextDisplay</title>
+  <link rel="icon" href="/favicon.svg">
+  <link rel="stylesheet" href="/src/marketing.css">
+  <link rel="stylesheet" href="/src/mine.css">
+</head>
+<body class="marketing">
+  <nav class="m-nav">
+    <a href="/" class="m-logo">bigtextdisplay<span>.com</span></a>
+    <a href="/" class="m-btn">New display</a>
+  </nav>
+  <main class="mine-page">
+    <h1 id="mine-greeting">Your displays</h1>
+    <p class="mine-sub" id="mine-sub">Links you've saved and shared.</p>
+    <ul class="mine-list" id="mine-list"></ul>
+    <p class="mine-empty" id="mine-empty" hidden>No displays yet. <a href="/">Create one →</a></p>
+    <p class="mine-error" id="mine-error" hidden>Link expired or invalid.</p>
+  </main>
+  <script type="module" src="/src/mine.ts"></script>
+</body>
+</html>

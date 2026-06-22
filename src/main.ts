@@ -1,7 +1,11 @@
 import './styles.css';
 import './extras.css';
 import type { AppSettings, ThemeName, SoundPack } from './modules/types';
-import { settingsToParams, paramsToSettings, copyShareLink } from './modules/share';
+import {
+  settingsToParams, paramsToSettings, buildShareUrl, getSocialLinks,
+  openSocial, getStoredRef, storeMyRefCode, getOgImageUrl,
+} from './modules/share';
+import { subscribeAndEmail, inviteByEmail } from './modules/growth';
 import { playFinishSound } from './modules/audio';
 import { checkPro, getStoredLicense, storeLicense, saveDisplay, applySavedDisplay } from './modules/pro';
 import { createRoom, fetchRoom, pushRoom } from './modules/api';
@@ -52,6 +56,7 @@ function load(): AppSettings {
 function save() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch { /* */ }
   scheduleUrlSync();
+  updatePageMeta();
   if (settings.roomId && settings.pro) pushRoomState();
 }
 
@@ -275,7 +280,9 @@ function setChromeHidden(hidden: boolean) {
 
 function updateProUI() {
   const pro = settings.pro;
-  $('#watermark').hidden = pro;
+  const wm = $('#watermark') as HTMLAnchorElement;
+  wm.hidden = pro;
+  if (!pro) wm.href = '/home.html?utm_source=watermark';
   $$('.pro-gated').forEach((el) => el.classList.toggle('pro-locked', !pro));
   const badge = $('#pro-badge');
   if (badge) badge.hidden = !pro;
@@ -364,6 +371,70 @@ function showToast(msg: string) {
 function openModal(id: string) { $(`#${id}`).classList.add('open'); }
 function closeModal(id: string) { $(`#${id}`).classList.remove('open'); }
 
+function sharePresentMode(): boolean {
+  return ($('#share-present') as HTMLInputElement).checked;
+}
+
+function refreshShareModal() {
+  const url = buildShareUrl(settings, { present: sharePresentMode() });
+  ($('#share-url-input') as HTMLInputElement).value = url;
+}
+
+function updatePageMeta() {
+  const title = settings.mode === 'timer'
+    ? `${String(settings.timerMinutes).padStart(2, '0')}:${String(settings.timerSeconds).padStart(2, '0')} — BigTextDisplay`
+    : (settings.text ? `${settings.text.slice(0, 40)} — BigTextDisplay` : 'BigTextDisplay');
+  document.title = title;
+  const setMeta = (sel: string, val: string) => {
+    const el = document.querySelector<HTMLMetaElement>(sel);
+    if (el) el.content = val;
+  };
+  setMeta('meta[property="og:title"]', title);
+  setMeta('meta[property="og:image"]', getOgImageUrl(settings));
+  setMeta('meta[name="twitter:image"]', getOgImageUrl(settings));
+}
+
+function maybeShowVisitorCta() {
+  const params = new URLSearchParams(location.search);
+  const isSharedView = params.has('q') || params.has('t') || params.has('ref');
+  if (!isSharedView || settings.pro) return;
+  const cta = $('#visitor-cta');
+  setTimeout(() => { cta.hidden = false; }, 4000);
+  setTimeout(() => { cta.hidden = true; }, 20000);
+}
+
+async function openShareModal() {
+  refreshShareModal();
+  openModal('share-modal');
+}
+
+async function handleShareEmail(e: Event) {
+  e.preventDefault();
+  const email = ($('#share-email') as HTMLInputElement).value.trim();
+  const firstName = ($('#share-first-name') as HTMLInputElement).value.trim();
+  const reminders = ($('#share-reminders') as HTMLInputElement).checked;
+  const shareUrl = buildShareUrl(settings, { present: sharePresentMode() });
+  const btn = $('#share-email-btn') as HTMLButtonElement;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const result = await subscribeAndEmail({
+      email,
+      firstName,
+      shareUrl,
+      reminders,
+      referredBy: getStoredRef(),
+    });
+    if (result.refCode) storeMyRefCode(result.refCode);
+    showToast(result.emailed ? 'Check your inbox!' : 'Saved — add RESEND_API_KEY to send emails');
+  } catch {
+    showToast('Could not save — try again');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Email me this link';
+  }
+}
+
 async function setupRoom() {
   if (!settings.pro) { location.href = '/upgrade.html'; return; }
   try {
@@ -418,16 +489,54 @@ function bindEvents() {
     sw.addEventListener('click', () => applyTheme(sw.dataset.theme as ThemeName));
   });
 
-  $('#btn-hide').addEventListener('click', () => setChromeHidden(!document.body.classList.contains('presentation')));
+  $('#btn-hide').addEventListener('click', () => {
+    const hiding = !document.body.classList.contains('presentation');
+    setChromeHidden(hiding);
+    if (hiding && !settings.pro && !localStorage.getItem('btd-hide-nudge')) {
+      localStorage.setItem('btd-hide-nudge', '1');
+      setTimeout(() => {
+        if (confirm('Presenting weekly? Save this display to your email for next time.')) openShareModal();
+      }, 600);
+    }
+  });
   $('#chrome-reveal').addEventListener('click', () => setChromeHidden(false));
   $('#btn-fullscreen').addEventListener('click', () => {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
     else document.exitFullscreen?.();
   });
 
-  $('#btn-share').addEventListener('click', async () => {
-    try { await copyShareLink(settings); showToast('Link copied!'); }
-    catch { showToast('Copy failed'); }
+  $('#btn-share').addEventListener('click', () => openShareModal());
+  $('#share-close').addEventListener('click', () => closeModal('share-modal'));
+  $('#share-present').addEventListener('change', refreshShareModal);
+  $('#share-copy-btn').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(buildShareUrl(settings, { present: sharePresentMode() }));
+      showToast('Link copied!');
+    } catch { showToast('Copy failed'); }
+  });
+  $('#share-email-form').addEventListener('submit', handleShareEmail);
+  $$<HTMLButtonElement>('.social-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const links = getSocialLinks(buildShareUrl(settings, { present: sharePresentMode() }), settings);
+      const key = btn.dataset.social as keyof ReturnType<typeof getSocialLinks>;
+      if (links[key]) openSocial(links[key]);
+    });
+  });
+  $('#invite-send-btn').addEventListener('click', async () => {
+    const to = ($('#invite-email') as HTMLInputElement).value.trim();
+    if (!to) return;
+    const fromName = ($('#share-first-name') as HTMLInputElement).value.trim();
+    try {
+      await inviteByEmail({
+        to,
+        fromName,
+        shareUrl: buildShareUrl(settings, { present: sharePresentMode() }),
+      });
+      showToast('Invite sent!');
+      ($('#invite-email') as HTMLInputElement).value = '';
+    } catch {
+      showToast('Invite failed — check Resend config');
+    }
   });
 
   $('#btn-room').addEventListener('click', () => setupRoom());
@@ -590,6 +699,13 @@ async function init() {
   if (settings.roomId && settings.pro) startRoomPoll();
   if (!settings.onboardingDone) $('#onboarding').classList.add('open');
 
+  if (new URLSearchParams(location.search).get('present') === '1') {
+    setChromeHidden(true);
+    setTimeout(() => document.documentElement.requestFullscreen?.().catch(() => {}), 400);
+  }
+
+  updatePageMeta();
+  maybeShowVisitorCta();
   bindEvents();
   document.body.classList.add('app-ready');
   requestAnimationFrame(fitText);

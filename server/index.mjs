@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import { sendJson, handleOptions, readJsonBody } from '../api/_lib/http.js';
 import { createProLicense, verifyLicense } from '../api/_lib/license.js';
 import { createRoom, getRoom, saveRoom } from '../api/_lib/rooms.js';
+import { upsertSubscriber, getSubscriberByToken, incrementRef } from '../api/_lib/subscribers.js';
+import { sendShareEmail, sendInviteEmail, SITE } from '../api/_lib/resend.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 8787;
@@ -92,6 +94,45 @@ const server = http.createServer(async (req, res) => {
     const { subscriptionId, email } = data;
     if (!subscriptionId) return json(res, 400, { error: 'subscriptionId required' });
     json(res, 200, createProLicense({ subscriptionId, email }));
+    return;
+  }
+
+  if (pathname === '/api/subscribe' && req.method === 'POST') {
+    let body = {};
+    try { body = await readBody(req); } catch { return json(res, 400, { error: 'Invalid JSON' }); }
+    try {
+      if (body.referredBy) await incrementRef(body.referredBy);
+      const { subscriber, token } = await upsertSubscriber(body);
+      const magicUrl = `${SITE}/mine.html?token=${token}`;
+      let emailed = false;
+      if (body.shareUrl) {
+        const r = await sendShareEmail({ email: subscriber.email, firstName: subscriber.firstName, shareUrl: body.shareUrl, magicUrl });
+        emailed = r.ok;
+      }
+      json(res, 200, { ok: true, emailed, magicUrl, refCode: subscriber.refCode });
+    } catch (e) {
+      json(res, 400, { error: e.message || 'Subscribe failed' });
+    }
+    return;
+  }
+
+  if (pathname === '/api/email/invite' && req.method === 'POST') {
+    let body = {};
+    try { body = await readBody(req); } catch { return json(res, 400, { error: 'Invalid JSON' }); }
+    try {
+      await sendInviteEmail(body);
+      json(res, 200, { ok: true });
+    } catch (e) {
+      json(res, 500, { error: e.message || 'Send failed' });
+    }
+    return;
+  }
+
+  const mineMatch = pathname.match(/^\/api\/mine\/([^/]+)$/);
+  if (mineMatch && req.method === 'GET') {
+    const sub = await getSubscriberByToken(decodeURIComponent(mineMatch[1]));
+    if (!sub) return json(res, 404, { error: 'Not found' });
+    json(res, 200, { firstName: sub.firstName || '', email: sub.email, displays: sub.displays || [], refCode: sub.refCode, shareCount: sub.shareCount || 0 });
     return;
   }
 

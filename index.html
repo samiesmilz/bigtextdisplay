@@ -8,7 +8,12 @@
   <meta property="og:title" content="BigTextDisplay">
   <meta property="og:description" content="Big text and timers for any screen. Share a link or control from your phone.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://bigtextdisplay.com">
+  <meta property="og:url" content="https://www.bigtextdisplay.com">
+  <meta property="og:image" content="https://www.bigtextdisplay.com/api/og?q=HELLO&theme=midnight">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BigTextDisplay">
+  <meta name="twitter:description" content="Big text and timers for any screen.">
+  <meta name="twitter:image" content="https://www.bigtextdisplay.com/api/og?q=HELLO&theme=midnight">
   <title>BigTextDisplay</title>
   <link rel="icon" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/favicon.svg">
@@ -37,7 +42,12 @@
     </section>
   </main>
 
-  <div class="watermark" id="watermark">bigtextdisplay.com</div>
+  <a class="watermark" id="watermark" href="/home.html?utm_source=watermark" target="_blank" rel="noopener">bigtextdisplay.com</a>
+
+  <div class="visitor-cta" id="visitor-cta" hidden>
+    <span>Like this display?</span>
+    <a href="/home.html?utm_source=visitor_cta">Make your own free →</a>
+  </div>
 
   <div class="times-up" id="times-up">
     <h1>TIME'S UP</h1>
@@ -150,6 +160,49 @@
 
   <div class="chrome-hover-zone" id="chrome-hover-zone" aria-hidden="true">
     <button type="button" class="chrome-reveal" id="chrome-reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg><span>Controls</span></button>
+  </div>
+
+  <div class="modal-backdrop" id="share-modal">
+    <div class="modal modal-wide">
+      <h2>Share your display</h2>
+      <p class="modal-sub">Anyone with the link sees the same text or timer.</p>
+      <div class="share-url-box">
+        <input type="text" id="share-url-input" readonly>
+        <button type="button" class="chip" id="share-copy-btn">Copy</button>
+      </div>
+
+      <div class="social-row" aria-label="Share on social">
+        <button type="button" class="social-btn" data-social="twitter" title="Share on X">𝕏</button>
+        <button type="button" class="social-btn" data-social="facebook" title="Facebook">f</button>
+        <button type="button" class="social-btn" data-social="linkedin" title="LinkedIn">in</button>
+        <button type="button" class="social-btn" data-social="whatsapp" title="WhatsApp">Wa</button>
+        <button type="button" class="social-btn" data-social="reddit" title="Reddit">↗</button>
+        <button type="button" class="social-btn" data-social="email" title="Email app">✉</button>
+      </div>
+
+      <label class="share-check">
+        <input type="checkbox" id="share-present"> Presentation mode link (hides controls)
+      </label>
+
+      <div class="share-divider"><span>Save &amp; come back</span></div>
+
+      <form id="share-email-form" class="share-form">
+        <input type="text" id="share-first-name" placeholder="First name" autocomplete="given-name">
+        <input type="email" id="share-email" placeholder="Email address" required autocomplete="email">
+        <label class="share-check"><input type="checkbox" id="share-reminders"> Remind me weekly</label>
+        <button type="submit" class="modal-primary" id="share-email-btn">Email me this link</button>
+      </form>
+
+      <div class="share-divider"><span>Invite someone</span></div>
+      <div class="share-invite">
+        <input type="email" id="invite-email" placeholder="Colleague's email">
+        <button type="button" class="modal-secondary" id="invite-send-btn">Send invite</button>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-secondary" id="share-close">Done</button>
+      </div>
+    </div>
   </div>
 
   <div class="modal-backdrop" id="room-modal">

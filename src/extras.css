@@ -9,11 +9,40 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--display-muted);
-  opacity: 0.35;
-  pointer-events: none;
+  opacity: 0.4;
+  text-decoration: none;
+  transition: opacity 0.2s;
   user-select: none;
 }
-body.presentation .watermark { bottom: 12px; }
+.watermark:hover { opacity: 0.75; }
+body.presentation .watermark { bottom: 12px; opacity: 0.3; }
+
+/* Visitor viral CTA */
+.visitor-cta {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  font-size: 12px;
+  color: #a1a1aa;
+  animation: fade-in 0.5s ease;
+}
+.visitor-cta a {
+  color: #fafafa;
+  font-weight: 600;
+  text-decoration: none;
+}
+.visitor-cta a:hover { text-decoration: underline; }
+body.presentation .visitor-cta { bottom: 48px; }
 
 /* TIME'S UP overlay */
 .times-up {
@@ -80,7 +109,11 @@ body.presentation .watermark { bottom: 12px; }
   max-width: 360px;
   width: 100%;
   backdrop-filter: blur(20px);
+  max-height: 90vh;
+  overflow-y: auto;
 }
+.modal-wide { max-width: 440px; }
+.modal-sub { margin-bottom: 14px !important; }
 .modal h2 { font-size: 16px; margin-bottom: 8px; color: var(--chrome-text); }
 .modal p { font-size: 12px; color: var(--chrome-muted); margin-bottom: 12px; line-height: 1.5; }
 .modal img { display: block; margin: 12px auto; border-radius: 8px; }
@@ -204,3 +237,88 @@ body.app-ready .stage { animation: fade-in 0.5s ease; }
   backdrop-filter: blur(12px);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Share modal */
+.share-url-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.share-url-box input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--chrome-border);
+  background: var(--chrome-hover);
+  color: var(--chrome-text);
+  font-size: 11px;
+  font-family: var(--mono);
+}
+.social-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.social-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--chrome-border);
+  background: var(--chrome-hover);
+  color: var(--chrome-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.social-btn:hover { background: var(--chrome-active); }
+.share-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--chrome-muted);
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+.share-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--chrome-muted);
+}
+.share-divider::before,
+.share-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--chrome-border);
+}
+.share-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.share-form input[type="text"],
+.share-form input[type="email"],
+.share-invite input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--chrome-border);
+  background: var(--chrome-hover);
+  color: var(--chrome-text);
+  font-size: 14px;
+}
+.share-invite {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.share-invite button { flex-shrink: 0; white-space: nowrap; }
